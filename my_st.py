@@ -11,7 +11,7 @@ import stegano
 from stegano.lsbset import generators
 
 st.set_page_config(
-    page_title="Drought-watch",  # default page title
+    page_title="Stego",  # default page title
     layout="centered"
 )
 
@@ -29,7 +29,6 @@ def predict(img):
     net = cache_model()
 
     transform = albu.Compose([
-        #albu.Resize(512, 512, p=1.0),
         ToTensorV2(p=1.0),
     ])
 
@@ -52,7 +51,9 @@ def fast_encode(message, src_path, dest_path):
     img = stegano.lsbset.hide(src_path, message, generators.eratosthenes())
     img.save(dest_path)
     return img
-
+# a stanleyzheng.ca 184.168.131.241
+# cname www mighty-ravine-rt8xlwpm632si7s4ccr3jyv2.herokudns.com
+# 96.51.150.211
 def fast_decode(src_path):
     message = stegano.lsbset.reveal(src_path, generators.eratosthenes())
     return message
@@ -68,12 +69,12 @@ classes = ['JMiPOD', 'JUNIWARD', 'UERD']
 
 import math
 
-userFile = st.file_uploader('Please upload an image or tfrecord', type=['jpg', 'jpeg', 'png', 'npy'])
+userFile = st.file_uploader('Please upload an image', type=['jpg', 'jpeg', 'png'])
 if userFile is not None:
     img = Image.open(userFile)
     with st.spinner(text='Loading...'):
         if mode == 'Encode image':
-
+            print(img.size)
             width, height = img.size
             ratio = math.floor(height / width)
             newheight = ratio * 1024
@@ -81,7 +82,6 @@ if userFile is not None:
             img.save('image.png')
             message = st.text_input("Enter message to encode:")
             if st.button("Run steganography encoding"):
-                #img = fast_encode(message, 'image.png', 'outimage.png')
                 fast_encode(message, 'image.png', 'outimage.png')
                 img = Image.open('outimage.png')
                 st.image(img, width=None, caption='Output steganography encoded image', output_format='png')
@@ -101,6 +101,3 @@ if userFile is not None:
                 else:
                     label = f"Not stegographed"
                 st.success(label)
-
-#st.write('Feel free to [download images](https://github.com/stanleyjzheng/drought-watch/tree/master/example_images) to test. There are two file types: conventional images, which are 3 channel (RGB), and npy, which contain 10 channel images resulting in greater accuracy.')
-#st.write('Convert from tfrecord to npy with our GitHub repo linked below.')

@@ -1,27 +1,35 @@
 // import logo from "./logo.svg";
 import "./App.css";
-import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 function App() {
-    const { register, handleSubmit } = useForm();
+    const [file, setFile] = useState();
 
-    const onSubmit = async (data) => {
-        const imageFile = data.image[0];
+    const onChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("file", file);
         const response = await fetch("/api/upload", {
             method: "POST",
-            body: imageFile,
+            body: formData,
         });
-        console.log(await response.text());
+        console.log(response);
     };
 
     return (
         <div className="App">
             <header className="App-header">
                 <p>Upload Image!</p>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <input required ref={register} type="file" name="image" />
+                <form onSubmit={onSubmit}>
+                    <input required type="file" onChange={onChange} />
                     <button type="submit">Upload</button>
                 </form>
+                {/* <img src={image} /> */}
+
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {/* <a
                     className="App-link"

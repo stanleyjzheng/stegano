@@ -15,5 +15,5 @@ def upload():
         print("processing....")
         # TODO: insert pytorch function here!
         imageFile = request.files["file"]
-        imageFile.save(os.path.join("public/uploads", imageFile.filename))
+        imageFile.save(os.path.join("images", imageFile.filename))
         return "Image Upload Successful!"

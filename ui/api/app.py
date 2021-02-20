@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 
@@ -8,7 +8,8 @@ def hello():
     return "hello"
 
 
-@app.route("/api/upload", requests=["POST"])
+@app.route("/api/upload", methods=["POST"])
 def upload():
-    print("CALLED!")
-    print(request.data)
+    if request.method == "POST":
+        print(request.data)
+        return "Image Upload Successful!"

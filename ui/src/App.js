@@ -1,18 +1,23 @@
 // import logo from "./logo.svg";
 import "./App.css";
+import { useForm } from "react-hook-form";
 
 function App() {
-    const hello = () => {
-        alert("hiii");
+    const { register, handleSubmit } = useForm();
+
+    const onSubmit = (data) => {
+        console.log(data);
     };
+
     return (
         <div className="App">
             <header className="App-header">
+                <p>Upload Image!</p>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <input required ref={register} type="file" name="image" />
+                    <button type="submit">Submit</button>
+                </form>
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <button onClick={hello}>upload</button>
                 {/* <a
                     className="App-link"
                     href="https://reactjs.org"

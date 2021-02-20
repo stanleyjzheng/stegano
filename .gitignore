@@ -1,6 +1,9 @@
 input/alaska2-image-steganalysis
 input/weights
 .idea
+train_scripts/grad_clip
+experiment.ipynb
+final_b1.pt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

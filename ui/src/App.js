@@ -4,6 +4,7 @@ import { useState } from "react";
 
 function App() {
     const [file, setFile] = useState();
+    const [image, setImage] = useState(""); // image src
 
     const onChange = (e) => {
         setFile(e.target.files[0]);
@@ -25,10 +26,16 @@ function App() {
             <header className="App-header">
                 <p>Upload Image!</p>
                 <form onSubmit={onSubmit}>
-                    <input required type="file" onChange={onChange} />
+                    <input
+                        required
+                        type="file"
+                        accept="image/png"
+                        onChange={onChange}
+                    />
                     <button type="submit">Upload</button>
                 </form>
-                {/* <img src={image} /> */}
+                <br />
+                <img src={image} alt="stego" />
 
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {/* <a

@@ -5,8 +5,13 @@ import { useForm } from "react-hook-form";
 function App() {
     const { register, handleSubmit } = useForm();
 
-    const onSubmit = (data) => {
-        console.log(data);
+    const onSubmit = async (data) => {
+        const imageFile = data.image[0];
+        const response = await fetch("/api/upload", {
+            method: "POST",
+            body: imageFile,
+        });
+        console.log(await response.text());
     };
 
     return (
@@ -15,7 +20,7 @@ function App() {
                 <p>Upload Image!</p>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <input required ref={register} type="file" name="image" />
-                    <button type="submit">Submit</button>
+                    <button type="submit">Upload</button>
                 </form>
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {/* <a

@@ -15,7 +15,7 @@ st.set_page_config(
     layout="centered"
 )
 
-#@st.cache
+@st.cache
 def cache_model():
     torch.backends.cudnn.benchmark = True
     net = EfficientNet.from_name('efficientnet-b1')
@@ -29,13 +29,11 @@ def predict(img):
     net = cache_model()
 
     transform = albu.Compose([
-        albu.Resize(512, 512, p=1.0),
+        #albu.Resize(512, 512, p=1.0),
         ToTensorV2(p=1.0),
     ])
 
-    img = np.array(img.convert('RGB'))
-
-    img.save('model_image.jpg')
+    img.save('model_image.png', quality=100)
     img = cv2.imread('model_image.png', cv2.IMREAD_COLOR)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
 
@@ -43,16 +41,16 @@ def predict(img):
         # convert the image from RGBA2RGB
         img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
     img = transform(image=img)['image'].float()/255.0
-    st.write(img)
 
     y_pred = net(img.unsqueeze(0).cuda())
-    y_pred = 1 - nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,0]
-
-    return y_pred
+    #st.write()
+    #y_pred = 1 - nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,0]
+    y_pred = y_pred.cpu().detach().numpy()
+    return y_pred[:, 0], y_pred[:, 1:4]
 
 def fast_encode(message, src_path, dest_path):
     img = stegano.lsbset.hide(src_path, message, generators.eratosthenes())
-    #img.save(dest_path.split('.')[0]+'stego.png')
+    img.save(dest_path)
     return img
 
 def fast_decode(src_path):
@@ -62,21 +60,31 @@ def fast_decode(src_path):
 st.markdown("<style> .reportview-container .main footer {visibility: hidden;}    #MainMenu {visibility: hidden;}</style>", unsafe_allow_html=True)
 
 st.write('<h1 style="font-weight:400; color:red">Stego</h1>', unsafe_allow_html=True)
-st.write('### End-to-end steganography and steganlysis with Deep Convolutional Neural Networoks')
+st.write('### End-to-end steganography and steganlysis with Deep Convolutional Neural Networks')
 
 mode = st.selectbox("What would you like to do?", ("Encode image", "Decode image", "Run model on image"))
 
+classes = ['JMiPOD', 'JUNIWARD', 'UERD']
+
+import math
+
 userFile = st.file_uploader('Please upload an image or tfrecord', type=['jpg', 'jpeg', 'png', 'npy'])
 if userFile is not None:
-    cv2.imread(userFile)
     img = Image.open(userFile)
-    with st.spinner(text = 'Loading...'):
+    with st.spinner(text='Loading...'):
         if mode == 'Encode image':
+
+            width, height = img.size
+            ratio = math.floor(height / width)
+            newheight = ratio * 1024
+            img = img.resize((1024, newheight), Image.ANTIALIAS)
             img.save('image.png')
             message = st.text_input("Enter message to encode:")
             if st.button("Run steganography encoding"):
-                img = fast_encode(message, 'image.png', 'outimage.png')
-                st.image(img, use_column_width=True, caption='Output steganography encoded image', output_format='png')
+                #img = fast_encode(message, 'image.png', 'outimage.png')
+                fast_encode(message, 'image.png', 'outimage.png')
+                img = Image.open('outimage.png')
+                st.image(img, width=None, caption='Output steganography encoded image', output_format='png')
         elif mode == 'Decode image':
             img.save('decode_image.png')
             if st.button("Run steganography decoding"):
@@ -85,7 +93,13 @@ if userFile is not None:
                 st.success("Message: " + msg)
         elif mode == "Run model on image":
             if st.button("Run model"):
-                label = predict(img)
+                stego, out = predict(img)
+                st.write(stego, out)
+                cls = np.argmax(out)
+                if stego>0.5:
+                    label = f"Likely stegographed, possible algorithm {classes[cls]}"
+                else:
+                    label = f"Not stegographed"
                 st.success(label)
 
 #st.write('Feel free to [download images](https://github.com/stanleyjzheng/drought-watch/tree/master/example_images) to test. There are two file types: conventional images, which are 3 channel (RGB), and npy, which contain 10 channel images resulting in greater accuracy.')

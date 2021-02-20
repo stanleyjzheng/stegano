@@ -1,0 +1,12 @@
+Fitter prepared. Device is cuda:0
+
+2021-02-20T03:05:17.000922
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T03:13:39.125216
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T03:18:25.337299
+LR: 0.001

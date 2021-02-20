@@ -18,7 +18,9 @@ function App() {
             method: "POST",
             body: formData,
         });
-        console.log(response);
+        // const { message, imageSrc } = await response.json();
+        // console.log(message, imageSrc);
+        // setImage(imageSrc);
     };
 
     return (
@@ -35,7 +37,7 @@ function App() {
                     <button type="submit">Upload</button>
                 </form>
                 <br />
-                <img src={image} alt="stego" />
+                {/* {image ? <img src={image} alt="stego" /> : null} */}
 
                 {/* <img src={logo} className="App-logo" alt="logo" /> */}
                 {/* <a

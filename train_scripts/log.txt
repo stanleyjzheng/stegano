@@ -10,3 +10,55 @@ Fitter prepared. Device is cuda:0
 
 2021-02-20T03:18:25.337299
 LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:04:22.857791
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:05:37.832058
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:06:40.199958
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:08:55.642933
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:15:05.687452
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:15:37.625959
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:21:40.246347
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:27:04.127356
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:27:37.074156
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:30:37.263249
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:35:19.338916
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:37:10.091374
+LR: 0.001
+Fitter prepared. Device is cuda:0
+
+2021-02-20T04:39:36.328634
+LR: 0.001

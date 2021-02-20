@@ -14,6 +14,11 @@ def upload():
     if request.method == "POST":
         print("processing....")
         # TODO: insert pytorch function here!
-        imageFile = request.files["file"]
-        imageFile.save(os.path.join("images", imageFile.filename))
-        return "Image Upload Successful!"
+
+        # image_file = request.files["file"]
+        # image_file_name = image_file.filename
+        # image_file.save(os.path.join("./public/images", image_file_name))
+        # return {
+        #     "message": "Image Upload Successful!",
+        #     "imageSrc": f"./images/{image_file_name}",
+        # }

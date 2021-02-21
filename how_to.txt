@@ -1,0 +1,10 @@
+on my computer:
+A @ 96.51.150.211
+CNAME www @
+streamlit run my_st.py --server.headless=true --server.port 8080  
+in this case, port 8080 is forwarded to 80 in the meraki switch.
+
+on gcp
+A @ 35.224.236.157
+CNAME www @
+sudo /opt/conda/bin/streamlit run my_st.py --server.port 80

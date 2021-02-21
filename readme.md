@@ -1,7 +1,7 @@
 # Stegano
 ## End-to-end steganalysis and steganography tool
 
-#### Demo at [https://stanleyzheng.tech](https://stanleyzheng.tech)
+#### Demo at [https://stanleyzheng.tech](https://stanleyzheng.tech), video at [https://youtu.be/47eLlklIG-Q](https://youtu.be/47eLlklIG-Q)
 
 Please see the video before reading documentation, as the video is more brief.
 
@@ -27,9 +27,11 @@ Finally, we were utterly shocked by how difficult these steganographs were to de
 ### What it does
 Our app is split into 3 parts. Firstly, we provide users a way to encode their images with a steganography technique called least significant bit, or LSB. It's a quick and simple way to encode a message into an image.
 
-This is followed by our decoder, which decodes PNG's downloaded from our LSB steganograph encoder.
+This is followed by our decoder, which decodes PNG's downloaded from our LSB steganograph encoder. In this image, our decoder can be seen decoding a previoustly steganographed image:
+![](https://i.imgur.com/dge0fDw.png)
 
-Finally, we have a model (learn more about the model itself in the section below) which classifies an image into 4 categories: unstegographed, MiPOD, UNIWARD, or UERD. You can input an image into the encoder, then save it, and input the encoded and original images into the model, and they will be distinguished from each other.
+Finally, we have a model (learn more about the model itself in the section below) which classifies an image into 4 categories: unstegographed, MiPOD, UNIWARD, or UERD. You can input an image into the encoder, then save it, and input the encoded and original images into the model, and they will be distinguished from each other. In this image, we are inferencing our model on the image we decoded earlier, and it is correctly identified as stegographed.
+![](https://i.imgur.com/oa0N8cc.png)
 
 ### How I built it (very technical machine learning)
 We used data from a previous Kaggle competition, [ALASKA2 Image Steganalysis](https://www.kaggle.com/c/alaska2-image-steganalysis). This dataset presented a large problem in its massive size, of 305 000 512x512 images, or about 30gb. I first tried training on it with my local GPU alone, but at over 40 hours for an Efficientnet b3 model, it wasn't within our timeline for this hackathon. I ended up running this model on dual Tesla V100's with mixed precision, bringing the training time to about 10 hours. We then inferred on the train set and distilled a second model, an Efficientnet b1 (a smaller, faster model). This was trained on the RTX3090.

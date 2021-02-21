@@ -10,47 +10,55 @@ import numpy as np
 import stegano
 from stegano.lsbset import generators
 
+DEVICE='cuda'
+
 st.set_page_config(
-    page_title="Stego",  # default page title
+    page_title="Stegano",  # default page title
     layout="centered"
 )
 
+
 @st.cache
 def cache_model():
-    torch.backends.cudnn.benchmark = True
+    if DEVICE=='cuda':
+        torch.backends.cudnn.benchmark = True
     net = EfficientNet.from_name('efficientnet-b1')
     net._fc = nn.Linear(in_features=1280, out_features=4, bias=True)
-    checkpoint = torch.load('final_b1.pt')
+    checkpoint = torch.load('final_b1.pt', map_location=torch.device(DEVICE))
     net.load_state_dict(checkpoint['model_state_dict'])
-    return net.eval().cuda()
+    return net.eval().to(DEVICE)
+
 
 # https://stackoverflow.com/questions/32213893/how-to-cache-a-large-machine-learning-model-in-flask
-def predict(img):
+def predict(image):
     net = cache_model()
 
     transform = albu.Compose([
         ToTensorV2(p=1.0),
     ])
 
-    img.save('model_image.png', quality=100)
-    img = cv2.imread('model_image.png', cv2.IMREAD_COLOR)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB).astype(np.float32)
+    image.save('model_image.png', quality=100)
+    image = cv2.imread('model_image.png', cv2.IMREAD_COLOR)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
 
-    if len(img.shape) > 2 and img.shape[2] == 4:
+    if len(image.shape) > 2 and image.shape[2] == 4:
         # convert the image from RGBA2RGB
-        img = cv2.cvtColor(img, cv2.COLOR_RGBA2RGB)
-    img = transform(image=img)['image'].float()/255.0
+        image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
+    image = transform(image=image)['image'].float() / 255.0
 
-    y_pred = net(img.unsqueeze(0).cuda())
-    #st.write()
-    #y_pred = 1 - nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,0]
+    y_pred = net(image.unsqueeze(0).to(DEVICE))
+    # st.write()
+    # y_pred = 1 - nn.functional.softmax(y_pred, dim=1).data.cpu().numpy()[:,0]
     y_pred = y_pred.cpu().detach().numpy()
     return y_pred[:, 0], y_pred[:, 1:4]
+
 
 def fast_encode(message, src_path, dest_path):
     img = stegano.lsbset.hide(src_path, message, generators.eratosthenes())
     img.save(dest_path)
     return img
+
+
 # a stanleyzheng.ca 184.168.131.241
 # cname www mighty-ravine-rt8xlwpm632si7s4ccr3jyv2.herokudns.com
 # 96.51.150.211
@@ -58,11 +66,15 @@ def fast_decode(src_path):
     message = stegano.lsbset.reveal(src_path, generators.eratosthenes())
     return message
 
-st.markdown("<style> .reportview-container .main footer {visibility: hidden;}    #MainMenu {visibility: hidden;}</style>", unsafe_allow_html=True)
 
-st.write('<h1 style="font-weight:400; color:red">Stego</h1>', unsafe_allow_html=True)
+st.markdown(
+    "<style> .reportview-container .main footer {visibility: hidden;}    #MainMenu {visibility: hidden;}</style>",
+    unsafe_allow_html=True)
+
+st.write('<h1 style="font-weight:400; color:red">Stegano</h1>', unsafe_allow_html=True)
 st.write('### End-to-end steganography and steganlysis with Deep Convolutional Neural Networks')
 
+st.write('For best results, use a high resolution (at least 512x512) image.')
 mode = st.selectbox("What would you like to do?", ("Encode image", "Decode image", "Run model on image"))
 
 classes = ['JMiPOD', 'JUNIWARD', 'UERD']
@@ -78,7 +90,7 @@ if userFile is not None:
             message = st.text_input("Enter message to encode:")
             if st.button("Run steganography encoding"):
                 width, height = img.size
-                if width > 1024 or height > 1024:
+                if width >= 1024 or height >= 1024:
                     ratio = math.floor(height / width)
                     newheight = ratio * 1024
                     img = img.resize((1024, newheight), Image.ANTIALIAS)
@@ -97,7 +109,7 @@ if userFile is not None:
                 stego, out = predict(img)
                 st.write(stego, out)
                 cls = np.argmax(out)
-                if stego>0.5:
+                if stego > 0.5:
                     label = f"Likely stegographed, possible algorithm {classes[cls]}"
                 else:
                     label = f"Not stegographed"

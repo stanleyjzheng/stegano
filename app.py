@@ -1,10 +1,12 @@
 from flask import Flask, request
+import io
 import os
 import re
 from google.cloud import storage
-import numpy
+import numpy as np
 import cv2
 from PIL import Image
+import my_st
 
 import binascii
 import collections
@@ -26,29 +28,67 @@ def hello():
 
 
 @app.route("/api/encode", methods=["POST"])
-def upload():
+def encode():
     if request.method == "POST":
         print("processing....")
         # TODO: insert pytorch function here!
         # image_file = stego_function(request.files["file"])
         image_file = request.files["file"]
-        signed_url = upload_blob(image_file)
         img = Image.open(image_file)
+        print("image_file", image_file)
+        print("img", img)
+        encoded_img = my_st.fast_encode("onumonumon", img)
+        print("encoded_img", encoded_img)
+        signed_url = upload_blob(encoded_img, image_file.filename)
         return signed_url
 
 
-def upload_blob(source_file, bucket_name="stego-upload-bucket"):
+@app.route("/api/decode", methods=["POST"])
+def decode():
+    if request.method == "POST":
+        print("processing....")
+        # TODO: insert pytorch function here!
+        # image_file = stego_function(request.files["file"])
+        image_file = request.files["file"]
+        # signed_url = upload_blob(image_file)
+        img = Image.open(image_file)
+        return my_st.fast_decode(img)
+
+
+@app.route("/api/predict", methods=["POST"])
+def predict():
+    if request.method == "POST":
+        print("processing....")
+        # TODO: insert pytorch function here!
+        # image_file = stego_function(request.files["file"])
+        image_file = request.files["file"]
+        # signed_url = upload_blob(image_file)
+        img = Image.open(image_file)
+
+        stego, out = my_st.predict(img)
+        cls = np.argmax(out)
+        if stego > 0.5:
+            label = f"Likely stegographed, possible algorithm {classes[cls]}"
+        else:
+            label = f"Not stegographed"
+        return label
+        # return my_st.predict(img)
+
+
+def upload_blob(source_file, filename, bucket_name="stego-upload-bucket"):
     """Uploads a file to the bucket."""
 
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
 
-    destination_blob_name = (
-        re.sub("(\.png|\.jpg)", "", source_file.filename) + "-stego.png"
-    )
+    destination_blob_name = re.sub("(\.png|\.jpg)", "", filename) + "-stego.png"
     blob = bucket.blob(destination_blob_name)
 
-    blob.upload_from_file(source_file)
+    in_mem_file = io.BytesIO()
+    source_file.save(in_mem_file, format="PNG")
+
+    blob.upload_from_file(in_mem_file)
+    # blob.upload_from_file(source_file)
 
     print("File {} uploaded to {}.".format(source_file.filename, destination_blob_name))
 

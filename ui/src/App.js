@@ -58,10 +58,19 @@ function App() {
             });
             setImage(await response.text());
         } else if (option === "Decode Image") {
-            // TODO
+            const response = await fetch("/api/decode", {
+                method: "POST",
+                body: formData,
+            });
+            console.log(await response.text());
         } else {
             // Run Model On Image
             // TODO
+            const response = await fetch("/api/predict", {
+                method: "POST",
+                body: formData,
+            });
+            console.log(await response.text());
         }
         // toast.info("Uploaded File Successfully!");
         // setImage();

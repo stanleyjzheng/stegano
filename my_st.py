@@ -1,4 +1,4 @@
-import streamlit as st
+# import streamlit as st
 from PIL import Image
 import cv2
 import torch
@@ -10,22 +10,19 @@ import numpy as np
 import stegano
 from stegano.lsbset import generators
 
-DEVICE='cuda'
+DEVICE = "cpu"
 
-st.set_page_config(
-    page_title="Stegano",  # default page title
-    layout="centered"
-)
+# st.set_page_config(page_title="Stegano", layout="centered")  # default page title
 
 
-@st.cache
+# @st.cache
 def cache_model():
-    if DEVICE=='cuda':
+    if DEVICE == "cuda":
         torch.backends.cudnn.benchmark = True
-    net = EfficientNet.from_name('efficientnet-b1')
+    net = EfficientNet.from_name("efficientnet-b1")
     net._fc = nn.Linear(in_features=1280, out_features=4, bias=True)
-    checkpoint = torch.load('final_b1.pt', map_location=torch.device(DEVICE))
-    net.load_state_dict(checkpoint['model_state_dict'])
+    checkpoint = torch.load("final_b1.pt", map_location=torch.device(DEVICE))
+    net.load_state_dict(checkpoint["model_state_dict"])
     return net.eval().to(DEVICE)
 
 
@@ -33,18 +30,20 @@ def cache_model():
 def predict(image):
     net = cache_model()
 
-    transform = albu.Compose([
-        ToTensorV2(p=1.0),
-    ])
+    transform = albu.Compose(
+        [
+            ToTensorV2(p=1.0),
+        ]
+    )
 
-    image.save('model_image.png', quality=100)
-    image = cv2.imread('model_image.png', cv2.IMREAD_COLOR)
+    image.save("model_image.png", quality=100)
+    image = cv2.imread("model_image.png", cv2.IMREAD_COLOR)
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB).astype(np.float32)
 
     if len(image.shape) > 2 and image.shape[2] == 4:
         # convert the image from RGBA2RGB
         image = cv2.cvtColor(image, cv2.COLOR_RGBA2RGB)
-    image = transform(image=image)['image'].float() / 255.0
+    image = transform(image=image)["image"].float() / 255.0
 
     y_pred = net(image.unsqueeze(0).to(DEVICE))
     # st.write()
@@ -53,9 +52,8 @@ def predict(image):
     return y_pred[:, 0], y_pred[:, 1:4]
 
 
-def fast_encode(message, src_path, dest_path):
+def fast_encode(message, src_path):
     img = stegano.lsbset.hide(src_path, message, generators.eratosthenes())
-    img.save(dest_path)
     return img
 
 
@@ -67,6 +65,7 @@ def fast_decode(src_path):
     return message
 
 
+"""
 st.markdown(
     "<style> .reportview-container .main footer {visibility: hidden;}    #MainMenu {visibility: hidden;}</style>",
     unsafe_allow_html=True)
@@ -115,3 +114,4 @@ if userFile is not None:
                 else:
                     label = f"Not stegographed"
                 st.success(label)
+"""

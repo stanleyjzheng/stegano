@@ -43,6 +43,7 @@ function App() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        console.log(option);
         if (file === undefined) {
             toast.error("Oop! Please Upload a File with the Camera Button!");
             setImage("");
@@ -62,11 +63,10 @@ function App() {
         // setImage(imageSrc);
     };
 
-    const [option, setOption] = useState("");
+    const [option, setOption] = useState("Encode Image");
     const [open, setOpen] = useState(false);
 
     const handleChange = (event) => {
-        console.log(option);
         setOption(event.target.value);
     };
 
@@ -121,6 +121,7 @@ function App() {
                         onOpen={handleOpen}
                         value={option}
                         onChange={handleChange}
+                        defaultValue="Encoded Image"
                     >
                         <MenuItem value={"Encode Image"}>Encode Image</MenuItem>
                         <MenuItem value={"Decode Image"}>Decode Image</MenuItem>

@@ -90,9 +90,10 @@ if userFile is not None:
             message = st.text_input("Enter message to encode:")
             if st.button("Run steganography encoding"):
                 width, height = img.size
-                if width >= 1024 or height >= 1024:
-                    ratio = math.floor(height / width)
-                    newheight = ratio * 1024
+                if width > 1024 or height > 1024:
+                    ratio = height / width
+                    newheight = int(ratio * 1024)
+
                     img = img.resize((1024, newheight), Image.ANTIALIAS)
                 img.save('image.png')
                 fast_encode(message, 'image.png', 'outimage.png')

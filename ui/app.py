@@ -27,7 +27,7 @@ def upload():
     if request.method == "POST":
         print("processing....")
         # TODO: insert pytorch function here!
-
+        # image_file = stego_function(request.files["file"])
         image_file = request.files["file"]
         return upload_blob(image_file)
         # return "Image Uploaded Successfully"

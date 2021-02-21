@@ -2,6 +2,9 @@ from flask import Flask, request
 import os
 import re
 from google.cloud import storage
+import numpy
+import cv2
+from PIL import Image
 
 import binascii
 import collections
@@ -22,20 +25,16 @@ def hello():
     return "hello"
 
 
-@app.route("/api/upload", methods=["POST"])
+@app.route("/api/encode", methods=["POST"])
 def upload():
     if request.method == "POST":
         print("processing....")
         # TODO: insert pytorch function here!
         # image_file = stego_function(request.files["file"])
         image_file = request.files["file"]
-        return upload_blob(image_file)
-        # return "Image Uploaded Successfully"
-        # image_file.save(os.path.join("./public/images", image_file_name))
-        # return {
-        #     "message": "Image Upload Successful!",
-        #     "imageSrc": f"./images/{image_file_name}",
-        # }
+        signed_url = upload_blob(image_file)
+        img = Image.open(image_file)
+        return signed_url
 
 
 def upload_blob(source_file, bucket_name="stego-upload-bucket"):

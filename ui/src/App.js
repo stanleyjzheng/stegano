@@ -51,11 +51,18 @@ function App() {
         }
         const formData = new FormData();
         formData.append("file", file);
-        const response = await fetch("/api/upload", {
-            method: "POST",
-            body: formData,
-        });
-        setImage(await response.text());
+        if (option === "Encode Image") {
+            const response = await fetch("/api/encode", {
+                method: "POST",
+                body: formData,
+            });
+            setImage(await response.text());
+        } else if (option === "Decode Image") {
+            // TODO
+        } else {
+            // Run Model On Image
+            // TODO
+        }
         // toast.info("Uploaded File Successfully!");
         // setImage();
         // const {message, imageSrc] } await response.json();

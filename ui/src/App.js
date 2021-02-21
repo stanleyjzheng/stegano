@@ -18,6 +18,7 @@ function App() {
             method: "POST",
             body: formData,
         });
+        console.log(await response.text());
         // const { message, imageSrc } = await response.json();
         // console.log(message, imageSrc);
         // setImage(imageSrc);

@@ -1,6 +1,5 @@
 import "./App.css";
 import { useState } from "react";
-<<<<<<< HEAD
 import { Button } from "@material-ui/core";
 import IconButton from "@material-ui/core/IconButton";
 import PhotoCamera from "@material-ui/icons/PhotoCamera";
@@ -23,10 +22,6 @@ const useStyles = makeStyles((theme) => ({
 
 function App() {
     const classes = useStyles();
-=======
-
-function App() {
->>>>>>> 621812924768f003c287b880d4d5b6638ac444a3
     const [file, setFile] = useState();
     const [image, setImage] = useState(""); // image src
 

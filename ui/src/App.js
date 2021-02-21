@@ -9,6 +9,7 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
+import { toast } from "react-toastify";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -42,6 +43,11 @@ function App() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (file === undefined) {
+            toast.error("Oop! Please Upload a File with the Camera Button!");
+            setImage("");
+            return;
+        }
         const formData = new FormData();
         formData.append("file", file);
         const response = await fetch("/api/upload", {
@@ -49,6 +55,7 @@ function App() {
             body: formData,
         });
         setImage(await response.text());
+        // toast.info("Uploaded File Successfully!");
         // setImage();
         // const {message, imageSrc] } await response.json();
         // console.log(message, imageSrc);

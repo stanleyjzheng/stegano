@@ -29,7 +29,6 @@ def cache_model():
     return net.eval().to(DEVICE)
 
 
-# https://stackoverflow.com/questions/32213893/how-to-cache-a-large-machine-learning-model-in-flask
 def predict(image):
     net = cache_model()
 
@@ -59,13 +58,23 @@ def fast_encode(message, src_path, dest_path):
     return img
 
 
-# a stanleyzheng.ca 184.168.131.241
-# cname www mighty-ravine-rt8xlwpm632si7s4ccr3jyv2.herokudns.com
-# 96.51.150.211
 def fast_decode(src_path):
     message = stegano.lsbset.reveal(src_path, generators.eratosthenes())
     return message
 
+def compare_images(img1, img2):
+    from PIL import ImageChops
+    return ImageChops.difference(img2, img1)
+
+def contrast_compare_images(img1, img2):
+    from PIL import ImageChops
+    # img1 = np.array(img1)
+    # img2 = np.array(img2)
+    # diff = np.absolute(img2-img1)
+    diff = np.array(ImageChops.difference(img2, img1))
+    #diff = (diff-np.min(diff))/(np.max(diff)-np.min(diff))
+    #return Image.fromarray(np.uint8(diff*255))
+    return diff
 
 st.markdown(
     "<style> .reportview-container .main footer {visibility: hidden;}    #MainMenu {visibility: hidden;}</style>",
@@ -75,7 +84,7 @@ st.write('<h1 style="font-weight:400; color:red">Stegano</h1>', unsafe_allow_htm
 st.write('### End-to-end steganography and steganlysis with Deep Convolutional Neural Networks')
 
 st.write('For best results, use a high resolution (at least 512x512) image.')
-mode = st.selectbox("What would you like to do?", ("Encode image", "Decode image", "Run model on image"))
+mode = st.selectbox("What would you like to do?", ("Encode image", "Decode image", "Run model on image", "Visualize image differences"))
 
 classes = ['JMiPOD', 'JUNIWARD', 'UERD']
 
@@ -95,14 +104,12 @@ if userFile is not None:
                     newheight = int(ratio * 1024)
 
                     img = img.resize((1024, newheight), Image.ANTIALIAS)
-                img.save('image.png')
-                fast_encode(message, 'image.png', 'outimage.png')
+                fast_encode(message, img, 'outimage.png')
                 img = Image.open('outimage.png')
                 st.image(img, width=None, caption='Output steganography encoded image', output_format='png')
         elif mode == 'Decode image':
-            img.save('decode_image.png')
             if st.button("Run steganography decoding"):
-                msg = fast_decode('decode_image.png')
+                msg = fast_decode(img)
                 st.image(img, use_column_width=True, caption="Uploaded image", output_format='png')
                 st.success("Message: " + msg)
         elif mode == "Run model on image":
@@ -115,3 +122,16 @@ if userFile is not None:
                 else:
                     label = f"Not stegographed"
                 st.success(label)
+        elif mode == "Visualize image differences":
+            userFile_2 = st.file_uploader('Please upload a second image to compare', type=['jpg', 'jpeg', 'png'])
+            if st.button("Run image difference"):
+                width, height = img.size
+                if width > 1024 or height > 1024:
+                    ratio = height / width
+                    newheight = int(ratio * 1024)
+
+                    img = img.resize((1024, newheight), Image.ANTIALIAS)
+                img_2 = Image.open(userFile_2)
+                #i = compare_images(img, img_2)
+                diff = contrast_compare_images(img, img_2)
+                st.image(img, width=None, caption='Image differences', output_format='png')

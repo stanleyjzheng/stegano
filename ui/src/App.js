@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import InputLabel from "@material-ui/core/InputLabel";
+import FormControl from "@material-ui/core/FormControl";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -17,6 +18,16 @@ const useStyles = makeStyles((theme) => ({
     },
     input: {
         display: "none",
+    },
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 220,
+    },
+    submit: {
+        marginTop: 20,
+    },
+    photobutton: {
+        marginTop: 10,
     },
 }));
 
@@ -44,8 +55,24 @@ function App() {
         // setImage(imageSrc);
     };
 
+    const [option, setOption] = useState("");
+    const [open, setOpen] = useState(false);
+
+    const handleChange = (event) => {
+        console.log(option);
+        setOption(event.target.value);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleOpen = () => {
+        setOpen(true);
+    };
+
     return (
-        <div className="App container">
+        <div className="App">
             <br />
             <br />
             <br />
@@ -73,30 +100,55 @@ function App() {
                     multiple
                     type="file"
                 /> */}
-                <InputLabel id="demo-customized-select-label">Age</InputLabel>
-                <Select
-                    labelId="demo-customized-select-label"
-                    id="demo-customized-select"
-                    value="Age"
-                    //   onChange={handleChange}
-                    //   input={<BootstrapInput />}
-                >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    <MenuItem value={10}>Ten</MenuItem>
-                    <MenuItem value={20}>Twenty</MenuItem>
-                    <MenuItem value={30}>Thirty</MenuItem>
-                </Select>
+                <br />
+
+                <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-controlled-open-select-label">
+                        What would you like to do?
+                    </InputLabel>
+                    <Select
+                        labelId="demo-controlled-open-select-label"
+                        id="demo-controlled-open-select"
+                        open={open}
+                        onClose={handleClose}
+                        onOpen={handleOpen}
+                        value={option}
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={"Encode Image"}>Encode Image</MenuItem>
+                        <MenuItem value={"Decode Image"}>Decode Image</MenuItem>
+                        <MenuItem value={"Run Model On Image"}>
+                            Run Model On Image
+                        </MenuItem>
+                    </Select>
+                </FormControl>
+
+                {/* <FormControl className={classes.formControl}>
+                    <InputLabel id="demo-controlled-open-select-label">
+                        What would you like to do?
+                    </InputLabel>
+
+                    <Select
+                        labelId="demo-controlled-open-select-label"
+                        id="demo-controlled-open-select"
+                        open={open}
+                        onClose={handleClose}
+                        onOpen={handleOpen}
+                        value={age}
+                        onChange={handleChange}
+                    >
+                        <MenuItem>Encode Image</MenuItem>
+                        <MenuItem>Decode Image</MenuItem>
+                        <MenuItem>Run Model On Image</MenuItem>
+                    </Select>
+                </FormControl> */}
+                {/* <br /> */}
                 {/* <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value="What would you like to do?"
                     //   onChange={handleChange}
                 >
-                    <MenuItem>Encode Image</MenuItem>
-                    <MenuItem>Decode Image</MenuItem>
-                    <MenuItem>Run Model On Image</MenuItem>
                 </Select> */}
                 <Button
                     type="submit"
@@ -117,6 +169,7 @@ function App() {
                 <label htmlFor="icon-button-file">
                     <IconButton
                         color="secondary"
+                        className={classes.photobutton}
                         aria-label="upload picture"
                         component="span"
                     >

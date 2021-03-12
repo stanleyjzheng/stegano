@@ -33,20 +33,16 @@ const dcpCli = require('dcp/dcp-cli');
 //     const outputMap = await session.run([tensor]);
 //     return outputMap;
 // };
-loadModel = async function () {
-    require("onnxjs-node");
-    const session = new onnx.InferenceSession();
-    //const url = "https://github.com/stanleyjzheng/stegano/raw/master/final_b1.onnx";
-    const url = "./final_b1.onnx"
-    console.log(session)
-    session.loadModel(url);
-    return session
-}
+require("onnxjs-node");
+const session = new onnx.InferenceSession();
+//const url = "https://github.com/stanleyjzheng/stegano/raw/master/final_b1.onnx";
+const url = "./final_b1.onnx"
+console.log(session)
+session.loadModel(url);
 
 
 doInference = async function(width, height, data) {
     require("onnxjs-node")
-    session = loadModel()
     const np = require("ndarray")
     const onnx = require("onnxjs-node");
     const ops = require("ndarray-ops")

@@ -7,6 +7,7 @@ final_b1.pt
 *.png
 *.jpg
 test.ipynb
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
